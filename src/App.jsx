@@ -18,7 +18,8 @@ const Balance = ({ account }) => {
     if (!balance) {
         return <p>Loading...</p>;
     }
-    return <p>Balance: {balance} MTADA</p>;
+    return <p>Balance: {balance} MADA</p>;
+    // return <p>Balance: {balance} MTADA</p>;
 };
 
 function App() {

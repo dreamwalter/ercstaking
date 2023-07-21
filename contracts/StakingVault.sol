@@ -133,6 +133,7 @@ contract StakingVault is Ownable, Pausable, ReentrancyGuard {
         );
         require(staked > 0, "StakingVault: no tokens staked");
 
+        stakingToken.approve(address(this), _amount);
         stakingToken.safeTransferFrom(address(this), msg.sender, _amount);
 
         totalSupply -= _amount;

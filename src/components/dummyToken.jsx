@@ -4,11 +4,8 @@ import { DUMMY_TOKEN, DUMMY_TOKEN_ADDRESS, provider } from "../web3";
 
 const getBalanceAndClaimed = async account => {
     const dummyToken = DUMMY_TOKEN.connect(provider);
-    const [balance, claimed] = await Promise.all([
-        dummyToken.balanceOf(account),
-        dummyToken.hasClaimed(account),
-    ]);
-    return [ethers.utils.formatEther(balance), claimed];
+    const balance = await dummyToken.balanceOf(account);
+    return [ethers.utils.formatUnits(balance, 0)];
 };
 
 const addDummyTokenToMetaMask = async () => {
@@ -22,8 +19,8 @@ const addDummyTokenToMetaMask = async () => {
                 type: "ERC20",
                 options: {
                     address: DUMMY_TOKEN_ADDRESS,
-                    symbol: "CFC",
-                    decimals: 18,
+                    symbol: "$CFC",
+                    decimals: 0,
                 },
             },
         });
@@ -34,28 +31,11 @@ const addDummyTokenToMetaMask = async () => {
 
 const DummyToken = ({ account }) => {
     const [balance, setBalance] = useState("");
-    const [claimed, setClaimed] = useState(false);
-
-    const claim = async () => {
-        const signer = provider.getSigner();
-        const dummyToken = DUMMY_TOKEN.connect(signer);
-        const tx = await dummyToken.claim();
-        const receipt = await tx.wait();
-        console.log(receipt);
-
-        getBalanceAndClaimed(account, provider)
-            .then(([balance, claimed]) => {
-                setBalance(balance);
-                setClaimed(claimed);
-            })
-            .catch(console.error);
-    };
 
     useEffect(() => {
         getBalanceAndClaimed(account, provider)
-            .then(([balance, claimed]) => {
+            .then(([balance]) => {
                 setBalance(balance);
-                setClaimed(claimed);
             })
             .catch(console.error);
     }, [provider, account]);
@@ -63,7 +43,7 @@ const DummyToken = ({ account }) => {
     if (!balance) {
         return (
             <div>
-                <h2>CFC Token</h2>
+                <h2>$CFC Token</h2>
                 <p>Loading...</p>
             </div>
         );
@@ -71,15 +51,10 @@ const DummyToken = ({ account }) => {
 
     return (
         <div>
-            <h2>CFC Token</h2>
+            <h2>$CFC Token</h2>
             <p>
-                <strong>CFC Token balance:</strong> {balance} CFC
+                <strong>$CFC Token balance:</strong> {balance} $CFC
             </p>
-            {claimed ? (
-                <p>You have already claimed your CFC</p>
-            ) : (
-                <button onClick={claim}>Claim CFC</button>
-            )}
             <button onClick={addDummyTokenToMetaMask}>Add to MetaMask</button>
         </div>
     );

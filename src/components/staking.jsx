@@ -11,9 +11,9 @@ const getStakingViews = async account => {
         staking.totalStaked(),
     ]);
     return {
-        staked: ethers.utils.formatEther(staked),
-        reward: ethers.utils.formatEther(reward),
-        totalStaked: ethers.utils.formatEther(totalStaked),
+        staked: ethers.utils.formatUnits(staked, 0),
+        reward: ethers.utils.formatUnits(reward, 0),
+        totalStaked: ethers.utils.formatUnits(totalStaked, 0),
     };
 };
 
@@ -25,7 +25,7 @@ const Staking = ({ account }) => {
     const handleStake = async event => {
         event.preventDefault();
         const signer = provider.getSigner(account);
-        const amount = ethers.utils.parseEther(stake);
+        const amount = ethers.utils.parseUnits(stake, 0);
 
         const dummyToken = DUMMY_TOKEN.connect(signer);
         const allowance = await dummyToken.allowance(
@@ -51,7 +51,7 @@ const Staking = ({ account }) => {
         const signer = provider.getSigner(account);
         const staking = STAKING_CONTRACT.connect(signer);
 
-        const amount = ethers.utils.parseEther(withdraw);
+        const amount = ethers.utils.parseUnits(withdraw, 0);
         const tx = await staking.withdraw(amount);
         await tx.wait();
     };
@@ -81,34 +81,34 @@ const Staking = ({ account }) => {
         <div>
             <h2>Staking</h2>
             <p>
-                <strong>Staked: </strong> {views.staked} CFC
+                <strong>Staked: </strong> {views.staked} $CFC
             </p>
             <p>
-                <strong>Reward: </strong> {views.reward} CFC
+                <strong>Reward: </strong> {views.reward} $CFC
             </p>
             <p>
-                <strong>Total Staked: </strong> {views.totalStaked} CFC
+                <strong>Total Staked: </strong> {views.totalStaked} $CFC
             </p>
             <div style={{ display: "flex" }}>
                 <form onSubmit={handleStake}>
                     <label htmlFor="stake">Stake</label>
                     <input
                         id="stake"
-                        placeholder="0.0 CFC"
+                        placeholder="0 $CFC"
                         value={stake}
                         onChange={e => setStake(e.target.value)}
                     />
-                    <button type="submit">Stake CFC</button>
+                    <button type="submit">Stake $CFC</button>
                 </form>
                 <form onSubmit={handleWithdraw}>
                     <label htmlFor="withdraw">Withdraw</label>
                     <input
                         id="withdraw"
-                        placeholder="0.0 CFC"
+                        placeholder="0 $CFC"
                         value={withdraw}
                         onChange={e => setWithdraw(e.target.value)}
                     />
-                    <button type="submit">Withdraw CFC</button>
+                    <button type="submit">Withdraw $CFC</button>
                 </form>
             </div>
             <button onClick={handleClaimReward}>Claim Reward</button>
